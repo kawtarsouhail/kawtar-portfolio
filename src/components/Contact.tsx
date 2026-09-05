@@ -63,7 +63,7 @@ export default function Contact() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="relative mt-8 flex flex-wrap items-center justify-center gap-6 font-mono text-xs text-muted"
         >
-          <a href="https://linkedin.com/in/kawtarsouhail" className="flex items-center gap-1.5 hover:text-text">
+          <a href="https://www.linkedin.com/in/kawtar-souhail-44a969250/" className="flex items-center gap-1.5 hover:text-text">
             <Linkedin size={14} /> LinkedIn
           </a>
           <a href="https://github.com/kawtarsouhail" className="flex items-center gap-1.5 hover:text-text">
