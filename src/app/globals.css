@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0d0e13;
+  color: #f3f1ea;
+}
+
+::selection {
+  background-color: rgba(140, 124, 251, 0.35);
+  color: #f3f1ea;
+}
+
+/* Custom cursor only on devices with a real pointer (desktop) */
+@media (pointer: fine) {
+  .cursor-enabled {
+    cursor: none;
+  }
+  .cursor-enabled a,
+  .cursor-enabled button {
+    cursor: none;
+  }
+}
+
+.mask-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
