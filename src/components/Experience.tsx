@@ -1,56 +1,77 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { timeline } from "@/data/experience";
+import { useRef } from "react";
+import { motion, useScroll } from "framer-motion";
+import { Briefcase, GraduationCap } from "lucide-react";
+import { usePrefs } from "./Providers";
+import { SectionHead } from "./ui";
+import { experience } from "@/data/content";
+import { colorUi } from "@/lib/pipelineColors";
 
 export default function Experience() {
-  return (
-    <section id="experience" className="mx-auto max-w-4xl px-6 py-28 md:py-36">
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.5 }}
-        className="mb-4 font-mono text-sm text-accent"
-      >
-        04 / Parcours
-      </motion.p>
-      <motion.h2
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.6 }}
-        className="mb-16 font-display text-3xl text-text sm:text-4xl"
-      >
-        Expérience & formation.
-      </motion.h2>
+  const { lang } = usePrefs();
+  const ref = useRef<HTMLOListElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 60%"] });
 
-      <div className="relative border-l border-line pl-8">
-        {timeline.map((item, i) => (
-          <motion.div
-            key={item.title + item.date}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5, delay: i * 0.05 }}
-            className="relative pb-12 last:pb-0"
-          >
-            <span
-              className={`absolute -left-[calc(2rem+4.5px)] top-1.5 h-2.5 w-2.5 rounded-full ${
-                item.type === "experience" ? "bg-accent" : "bg-muted"
-              }`}
-            />
-            <p className="font-mono text-xs text-muted">{item.date}</p>
-            <p className="mt-1 font-display text-lg text-text">{item.title}</p>
-            <p className="font-body text-sm text-muted">{item.place}</p>
-            {item.description && (
-              <p className="mt-2 max-w-lg font-body text-sm leading-relaxed text-muted">
-                {item.description}
-              </p>
-            )}
-          </motion.div>
+  return (
+    <section id="experience" className="mx-auto max-w-4xl px-6 py-20 md:py-28">
+      <SectionHead kicker={experience.kicker[lang]} title={experience.title[lang]} dot="ingest" mark="llm" />
+
+      <div className="mt-6 flex gap-4 text-xs text-muted">
+        {(["experience", "education"] as const).map((k) => (
+          <span key={k} className="flex items-center gap-2">
+            <span className={`h-2 w-2 rounded-full ${k === "experience" ? colorUi.action.dot : colorUi.ingest.dot}`} />
+            {experience.legend[k][lang]}
+          </span>
         ))}
       </div>
+
+      <ol ref={ref} className="relative mt-10 grid gap-10 md:grid-cols-2 md:gap-y-12">
+        <div
+          aria-hidden
+          className="absolute bottom-0 left-4 top-0 w-0.5 -translate-x-1/2 bg-line md:left-1/2"
+        >
+          <motion.div
+            className="h-full origin-top bg-gradient-to-b from-ingest via-retrieve to-action"
+            style={{ scaleY: scrollYProgress }}
+          />
+        </div>
+
+        {experience.items.map((item, i) => {
+          const isWork = item.type === "experience";
+          const ui = isWork ? colorUi.action : colorUi.ingest;
+          const Icon = isWork ? Briefcase : GraduationCap;
+          const left = i % 2 === 0;
+          return (
+            <motion.li
+              key={item.title.en + item.date}
+              initial={{ opacity: 0, x: left ? -28 : 28 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.55 }}
+              className={`relative pl-12 ${
+                left ? "md:col-start-1 md:pl-0 md:pr-12 md:text-right" : "md:col-start-2 md:pl-12"
+              }`}
+            >
+              <span
+                className={`absolute left-4 top-0 z-10 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full border-2 ring-4 ring-bg ${ui.fill} ${
+                  left ? "md:left-auto md:right-0 md:translate-x-1/2" : "md:left-0"
+                }`}
+              >
+                <Icon size={14} />
+              </span>
+              <p className={`inline-block rounded-full border px-2.5 py-0.5 font-mono text-[11px] text-fg ${ui.border}`}>
+                {item.date}
+              </p>
+              <h3 className="mt-2 font-display text-base font-semibold leading-snug text-fg">{item.title[lang]}</h3>
+              <p className="text-sm text-muted">{item.place}</p>
+              {item.description && (
+                <p className="mt-2 text-sm leading-relaxed text-muted">{item.description[lang]}</p>
+              )}
+            </motion.li>
+          );
+        })}
+      </ol>
     </section>
   );
 }

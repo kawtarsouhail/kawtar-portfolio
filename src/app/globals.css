@@ -2,25 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Couleurs = trois nombres RGB séparés par des espaces.
+   Ce format permet à Tailwind d'ajouter la transparence (ex: bg-ingest/20). */
+:root {
+  --c-bg: 243 241 255; /* Brume      #F3F1FF */
+  --c-surface: 255 255 255; /*             #FFFFFF */
+  --c-surface2: 232 228 252; /*            #E8E4FC */
+  --c-fg: 27 21 53; /* Aubergine  #1B1535 */
+  --c-muted: 91 84 120; /*                #5B5478 */
+  --c-line: 221 216 245; /*               #DDD8F5 */
+
+  --c-ingest: 75 59 255; /* Bleu électrique #4B3BFF */
+  --c-retrieve: 25 201 154; /* Menthe          #19C99A */
+  --c-llm: 255 201 60; /* Soleil          #FFC93C */
+  --c-action: 255 79 163; /* Fuchsia         #FF4FA3 */
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --c-bg: 20 16 42; /* Aubergine nuit #14102A */
+  --c-surface: 30 24 64; /*                #1E1840 */
+  --c-surface2: 43 35 86; /*               #2B2356 */
+  --c-fg: 243 241 255; /*                  #F3F1FF */
+  --c-muted: 169 161 204; /*               #A9A1CC */
+  --c-line: 51 43 94; /*                   #332B5E */
+
+  /* Le bleu est éclairci pour rester lisible sur fond sombre */
+  --c-ingest: 139 125 255; /*              #8B7DFF */
+
+  color-scheme: dark;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #0d0e13;
-  color: #f3f1ea;
+  background-color: rgb(var(--c-bg));
+  color: rgb(var(--c-fg));
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 ::selection {
-  background-color: rgba(140, 124, 251, 0.35);
-  color: #f3f1ea;
+  background-color: rgb(var(--c-ingest) / 0.3);
 }
 
-/* Custom cursor only on devices with a real pointer (desktop) */
+/* Curseur personnalisé uniquement sur les appareils avec une vraie souris */
 @media (pointer: fine) {
-  .cursor-enabled {
-    cursor: none;
-  }
+  .cursor-enabled,
   .cursor-enabled a,
   .cursor-enabled button {
     cursor: none;
@@ -28,18 +58,20 @@ body {
 }
 
 .mask-fade-x {
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
-  );
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+/* Respect des personnes qui réduisent les animations dans leur système */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

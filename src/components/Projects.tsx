@@ -1,69 +1,40 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { projects } from "@/data/projects";
-import ProjectCard from "./ProjectCard";
+import { usePrefs } from "./Providers";
+import AIProjectCard from "./AIProjectCard";
+import { aiProjects } from "@/data/work";
+import { colorUi, type PipelineColor } from "@/lib/pipelineColors";
+
+const legendOrder: PipelineColor[] = ["ingest", "retrieve", "llm", "action"];
 
 export default function Projects() {
+  const { t } = usePrefs();
+  const p = t.projects;
+
   return (
-    <section id="projects" className="mx-auto max-w-6xl px-6 py-28 md:py-36">
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.5 }}
-        className="mb-4 font-mono text-sm text-accent"
-      >
-        02 / Projets
-      </motion.p>
-      <motion.h2
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.6 }}
-        className="mb-14 max-w-2xl font-display text-3xl text-text sm:text-4xl"
-      >
-        Des idées transformées en produits — du web classique à l&apos;IA appliquée.
-      </motion.h2>
+    <section id="projects" className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+      <h2 className="max-w-3xl font-display text-2xl font-semibold leading-tight tracking-tight text-fg sm:text-3xl">
+        {p.title}
+      </h2>
+      <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted">{p.subtitle}</p>
 
-      <div className="grid grid-cols-1 gap-6">
-        {/* 01 — full width feature */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-        >
-          <ProjectCard project={projects[0]} />
-        </motion.div>
-
-        {/* 02 + 03 — two column */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {[projects[1], projects[2]].map((p, i) => (
-            <motion.div
-              key={p.number}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.6, delay: i * 0.08 }}
-            >
-              <ProjectCard project={p} />
-            </motion.div>
-          ))}
-        </div>
-
-        {/* 04 — full-width horizontal */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-        >
-          <ProjectCard project={projects[3]} />
-        </motion.div>
-
-
+      {/* La légende explique ce que veulent dire les couleurs */}
+      <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+        <span className="text-muted">{p.legendTitle}</span>
+        {legendOrder.map((c) => (
+          <span key={c} className="flex items-center gap-2 text-fg">
+            <span className={`h-2.5 w-2.5 rounded-full ${colorUi[c].dot}`} />
+            {p.legend[c]}
+          </span>
+        ))}
       </div>
+
+      <div className="mt-12 space-y-8">
+        {aiProjects.map((project) => (
+          <AIProjectCard key={project.id} project={project} />
+        ))}
+      </div>
+
     </section>
   );
 }

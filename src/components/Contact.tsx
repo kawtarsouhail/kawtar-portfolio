@@ -1,78 +1,93 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowUpRight, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight, Check, Copy, Github, Linkedin, Mail, MapPin } from "lucide-react";
+import { usePrefs } from "./Providers";
+import { Rich } from "./ui";
+import { contact } from "@/data/content";
+
+const EMAIL = "kawtarsouhail698@gmail.com";
 
 export default function Contact() {
+  const { lang } = usePrefs();
+  const reduce = useReducedMotion();
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {}
+  };
+
+  // Des taches de couleur qui flottent doucement derrière le texte
+  const float = (d: number) =>
+    reduce ? {} : { animate: { y: [0, -14, 0] }, transition: { duration: d, repeat: Infinity, ease: "easeInOut" as const } };
+
   return (
-    <section id="contact" className="mx-auto max-w-6xl px-6 py-28 md:py-36">
-      <div className="relative overflow-hidden rounded-3xl border border-line bg-panel px-8 py-16 text-center md:px-16 md:py-24">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            background:
-              "radial-gradient(circle at 50% 0%, rgba(140,124,251,0.18), transparent 60%)",
-          }}
-        />
+    <section id="contact" className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+      <div className="relative isolate overflow-hidden rounded-[2rem] border border-line bg-surface px-6 py-14 text-center md:px-16 md:py-20">
+        <motion.div aria-hidden {...float(6)} className="absolute -left-10 top-6 -z-10 h-44 w-44 rounded-full bg-ingest opacity-20 blur-3xl" />
+        <motion.div aria-hidden {...float(7)} className="absolute -right-8 top-16 -z-10 h-40 w-40 rounded-full bg-action opacity-20 blur-3xl" />
+        <motion.div aria-hidden {...float(8)} className="absolute bottom-0 left-1/3 -z-10 h-40 w-40 rounded-full bg-retrieve opacity-20 blur-3xl" />
+
+        <motion.span
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="inline-flex items-center gap-2 rounded-full border border-line bg-bg px-3 py-1 font-mono text-xs text-muted"
+        >
+          <span className="h-2 w-2 animate-pulse rounded-full bg-retrieve" />
+          {contact.kicker[lang]}
+        </motion.span>
 
         <motion.h2
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-          className="relative font-display text-3xl leading-snug text-text sm:text-4xl md:text-5xl"
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="mx-auto mt-4 max-w-xl font-display text-2xl font-semibold leading-snug tracking-tight text-fg sm:text-3xl"
         >
-          Une idée ?
-          <br />
-          Faisons-en quelque chose de réel.
+          <Rich text={contact.title[lang]} color="llm" />
         </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="relative mx-auto mt-6 max-w-md font-body text-base text-muted"
-        >
-          Ouverte aux postes de développeuse junior full-stack ou IA/ML, au
-          Maroc ou à distance.
-        </motion.p>
+        <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-muted">{contact.text[lang]}</p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="relative mt-10 flex flex-wrap items-center justify-center gap-4"
-        >
-          <a
-            href="mailto:kawtarsouhail698@gmail.com"
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <motion.a
+            href={`mailto:${EMAIL}`}
             data-cursor-hover
-            className="group flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-body text-sm font-medium text-ink transition-transform hover:-translate-y-0.5"
+            whileHover={{ y: -3 }}
+            whileTap={{ scale: 0.97 }}
+            className="group flex items-center gap-2 rounded-full bg-ingest px-5 py-2.5 text-sm font-medium text-white dark:text-bg"
           >
             <Mail size={16} />
-            kawtarsouhail698@gmail.com
-            <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
-        </motion.div>
+            {EMAIL}
+            <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </motion.a>
+          <button
+            onClick={copy}
+            data-cursor-hover
+            className="flex items-center gap-2 rounded-full border border-line bg-bg px-4 py-2.5 text-sm text-fg transition-colors hover:border-ingest focus-visible:outline focus-visible:outline-2 focus-visible:outline-ingest"
+          >
+            {copied ? <Check size={15} className="text-retrieve" /> : <Copy size={15} />}
+            {copied ? contact.copied[lang] : contact.copy[lang]}
+          </button>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="relative mt-8 flex flex-wrap items-center justify-center gap-6 font-mono text-xs text-muted"
-        >
-          <a href="https://www.linkedin.com/in/kawtar-souhail-44a969250/" className="flex items-center gap-1.5 hover:text-text">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-6 font-mono text-xs text-muted">
+          <a href="https://www.linkedin.com/in/kawtar-souhail-44a969250/" className="flex items-center gap-1.5 hover:text-fg">
             <Linkedin size={14} /> LinkedIn
           </a>
-          <a href="https://github.com/kawtarsouhail" className="flex items-center gap-1.5 hover:text-text">
+          <a href="https://github.com/kawtarsouhail" className="flex items-center gap-1.5 hover:text-fg">
             <Github size={14} /> GitHub
           </a>
           <span className="flex items-center gap-1.5">
-            <MapPin size={14} /> Casablanca, Maroc
+            <MapPin size={14} /> {contact.location[lang]}
           </span>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

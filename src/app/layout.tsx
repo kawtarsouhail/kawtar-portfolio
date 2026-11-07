@@ -1,54 +1,53 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import CustomCursor from "@/components/CustomCursor";
+import { Providers } from "@/components/Providers";
 
-const fraunces = Fraunces({
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-fraunces",
-  weight: ["400", "500", "600"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const inter = Inter({
+const body = Instrument_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["400", "500", "600"],
+  variable: "--font-body",
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
+const mono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-jetbrains",
+  variable: "--font-mono",
   weight: ["400", "500"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Kawtar Souhail — Junior Full-Stack Developer & AI",
+  title: "Kawtar Souhail — AI & Automation Engineer",
   description:
-    "Portfolio of Kawtar Souhail, Junior Full-Stack Developer building modern web applications and AI-powered experiences.",
+    "Portfolio de Kawtar Souhail — automatisation, RAG et LLM. / Portfolio of Kawtar Souhail — automation, RAG and LLM.",
   openGraph: {
-    title: "Kawtar Souhail — Junior Full-Stack Developer & AI",
-    description:
-      "Portfolio of Kawtar Souhail, Junior Full-Stack Developer building modern web applications and AI-powered experiences.",
+    title: "Kawtar Souhail — AI & Automation Engineer",
     type: "website",
-    locale: "fr_FR",
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// Ce petit script s'exécute AVANT l'affichage de la page : il applique le
+// thème enregistré (ou celui du système) pour éviter un flash de la mauvaise couleur.
+const initScript = `(function(){try{var t=localStorage.getItem('theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t;var l=localStorage.getItem('lang');if(l){document.documentElement.lang=l}}catch(e){}})();`;
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: initScript }} />
+      </head>
       <body
-        className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable} font-body cursor-enabled bg-ink text-text antialiased`}
+        className={`${display.variable} ${body.variable} ${mono.variable} bg-bg font-body text-fg antialiased`}
       >
-        <CustomCursor />
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
